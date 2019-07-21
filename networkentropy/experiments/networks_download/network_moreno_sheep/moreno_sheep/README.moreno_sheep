@@ -1,0 +1,65 @@
+Sheep network, part of the Koblenz Network Collection
+===========================================================================
+
+This directory contains the TSV and related files of the moreno_sheep network:
+
+This directed network deescribes the dominance relationships between 28 female bighorn sheep (<i>Ovis canadensis</i>) observed on the National Bison Range in western Montana (USA) in 1984. A node represents a female bighorn sheep and an edge represents dominance of the left female bighorn sheep over the right female bighorn sheep. The edge weights indicate how often this dominance behaviour was observed. The sheep ages are provided in the entity file.  Sheeps that are listed as nine years old may have been older in reality.
+
+
+More information about the network is provided here: 
+http://konect.uni-koblenz.de/networks/moreno_sheep
+
+Files: 
+    meta.moreno_sheep -- Metadata about the network 
+    out.moreno_sheep -- The adjacency matrix of the network in space separated values format, with one edge per line
+      The meaning of the columns in out.moreno_sheep are: 
+        First column: ID of from node 
+        Second column: ID of to node
+        Third column: edge weight
+    ent.moreno_sheep.sheep.age -- Contains the attribute `age` of entity `sheep` of the network
+
+
+Complete documentation about the file format can be found in the KONECT
+handbook, in the section File Formats, available at:
+
+http://konect.uni-koblenz.de/publications
+
+All files are licensed under a Creative Commons Attribution-ShareAlike 2.0 Germany License.
+For more information concerning license visit http://konect.uni-koblenz.de/license.
+
+
+
+Use the following References for citation:
+
+@MISC{konect:2016:moreno_sheep,
+    title = {Sheep network dataset -- {KONECT}},
+    month = sep,
+    year = {2016},
+    url = {http://konect.uni-koblenz.de/networks/moreno_sheep}
+}
+
+@article{konect:hass,
+  title={Social Status in Female Bighorn Sheep (\emph{{Ovis}
+                  canadensis}): Expression, Development and Reproductive
+                  Correlates}, 
+  author={Hass, Christine C},
+  journal={J. of Zoology},
+  volume={225},
+  number={3},
+  pages={509--523},
+  year={1991},
+  publisher={Wiley Online Library}
+}
+
+
+@inproceedings{konect,
+	title = {{KONECT} -- {The} {Koblenz} {Network} {Collection}},
+	author = {Jérôme Kunegis},
+	year = {2013},
+	booktitle = {Proc. Int. Conf. on World Wide Web Companion},
+	pages = {1343--1350},
+	url = {http://userpages.uni-koblenz.de/~kunegis/paper/kunegis-koblenz-network-collection.pdf}, 
+	url_presentation = {http://userpages.uni-koblenz.de/~kunegis/paper/kunegis-koblenz-network-collection.presentation.pdf},
+}
+
+

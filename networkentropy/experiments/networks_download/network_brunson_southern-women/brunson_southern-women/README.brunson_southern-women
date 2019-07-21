@@ -1,0 +1,58 @@
+Southern women 2 network, part of the Koblenz Network Collection
+===========================================================================
+
+This directory contains the TSV and related files of the brunson_southern-women network:
+
+This bipartite dataset shows the participation of women in social events over a nine-month period. The data was collected in the Southern United States of America in the 1930s. In comparison to the other southern women dataset this network only consists of African-American women. There is an edge for every woman who participates in an event. Left nodes represent women and right nodes represent events.
+
+
+More information about the network is provided here: 
+http://konect.uni-koblenz.de/networks/brunson_southern-women
+
+Files: 
+    meta.brunson_southern-women -- Metadata about the network 
+    out.brunson_southern-women -- The adjacency matrix of the network in space separated values format, with one edge per line
+      The meaning of the columns in out.brunson_southern-women are: 
+        First column: ID of from node 
+        Second column: ID of to node
+
+
+Complete documentation about the file format can be found in the KONECT
+handbook, in the section File Formats, available at:
+
+http://konect.uni-koblenz.de/publications
+
+All files are licensed under a Creative Commons Attribution-ShareAlike 2.0 Germany License.
+For more information concerning license visit http://konect.uni-koblenz.de/license.
+
+
+
+Use the following References for citation:
+
+@MISC{konect:2016:brunson_southern-women,
+    title = {Southern women 2 network dataset -- {KONECT}},
+    month = sep,
+    year = {2016},
+    url = {http://konect.uni-koblenz.de/networks/brunson_southern-women}
+}
+
+@book{konect:southernwomen,
+    address = {Chicago},
+    author = {Davis, Allison and Gardner, Burleigh B. and Gardner, Mary R.},
+    publisher = {The University of Chicago Press},
+    title = {Deep South; a Social Anthropological Study of Caste and Class},
+    year = {1941}
+}
+
+
+@inproceedings{konect,
+	title = {{KONECT} -- {The} {Koblenz} {Network} {Collection}},
+	author = {Jérôme Kunegis},
+	year = {2013},
+	booktitle = {Proc. Int. Conf. on World Wide Web Companion},
+	pages = {1343--1350},
+	url = {http://userpages.uni-koblenz.de/~kunegis/paper/kunegis-koblenz-network-collection.pdf}, 
+	url_presentation = {http://userpages.uni-koblenz.de/~kunegis/paper/kunegis-koblenz-network-collection.presentation.pdf},
+}
+
+

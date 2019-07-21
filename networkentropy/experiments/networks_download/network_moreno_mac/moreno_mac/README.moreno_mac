@@ -1,0 +1,60 @@
+Macaques network, part of the Koblenz Network Collection
+===========================================================================
+
+This directory contains the TSV and related files of the moreno_mac network:
+
+This directed network contains dominance behaviour in a colony of 62 adult female Japanese macaques (<i>Macaca fuscata fuscata</i>).  A node represents a macaque and a directed edge A → B represents dominance of macaque A over macaque B.
+
+
+More information about the network is provided here: 
+http://konect.uni-koblenz.de/networks/moreno_mac
+
+Files: 
+    meta.moreno_mac -- Metadata about the network 
+    out.moreno_mac -- The adjacency matrix of the network in space separated values format, with one edge per line
+      The meaning of the columns in out.moreno_mac are: 
+        First column: ID of from node 
+        Second column: ID of to node
+        Third column: edge weight
+
+
+Complete documentation about the file format can be found in the KONECT
+handbook, in the section File Formats, available at:
+
+http://konect.uni-koblenz.de/publications
+
+All files are licensed under a Creative Commons Attribution-ShareAlike 2.0 Germany License.
+For more information concerning license visit http://konect.uni-koblenz.de/license.
+
+
+
+Use the following References for citation:
+
+@MISC{konect:2016:moreno_mac,
+    title = {Macaques network dataset -- {KONECT}},
+    month = sep,
+    year = {2016},
+    url = {http://konect.uni-koblenz.de/networks/moreno_mac}
+}
+
+@article{konect:takahata1991,
+  title={Diachronic Changes in the Dominance Relations of Adult Female
+                  {Japanese} Monkeys of the {Arashiyama} {B} Group}, 
+  author={Takahata, Yukio},
+  journal={The Monkeys of Arashiyama. State University of New York Press, Albany},
+  pages={123--139},
+  year={1991}
+}
+
+
+@inproceedings{konect,
+	title = {{KONECT} -- {The} {Koblenz} {Network} {Collection}},
+	author = {Jérôme Kunegis},
+	year = {2013},
+	booktitle = {Proc. Int. Conf. on World Wide Web Companion},
+	pages = {1343--1350},
+	url = {http://userpages.uni-koblenz.de/~kunegis/paper/kunegis-koblenz-network-collection.pdf}, 
+	url_presentation = {http://userpages.uni-koblenz.de/~kunegis/paper/kunegis-koblenz-network-collection.presentation.pdf},
+}
+
+
