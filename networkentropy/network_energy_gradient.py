@@ -2,7 +2,6 @@ import operator
 from typing import Dict, Callable, Tuple, Iterable, Optional
 from types import MethodType, MappingProxyType
 from networkx.algorithms.community.centrality import girvan_newman
-from functools import lru_cache
 import networkx as nx
 
 from networkentropy import network_energy as ne
@@ -13,12 +12,10 @@ _NODES_DECORATORS_ATTR_NAME = 'nodes_decorators'
 
 _EMPTY_DICT = MappingProxyType({})
 
-decorating_function = lru_cache(maxsize=10)
-
 _ENERGY_METHODS_CACHING = {
-    'randic': decorating_function(ne.randic_centrality),
-    'laplacian': decorating_function(ne.laplacian_centrality),
-    'graph': decorating_function(ne.graph_energy_centrality)
+    'randic': ne.randic_centrality,
+    'laplacian': ne.laplacian_centrality,
+    'graph': ne.graph_energy_centrality
 }
 
 
@@ -192,7 +189,6 @@ def get_graph_with_energy_data(g: nx.Graph, methods: Iterable[str], radius: int 
                           clear=clear)
 
 
-@lru_cache(maxsize=10)
 def get_energy_gradient_centrality(g: nx.Graph, method: str, radius: int = 1, alpha=0.85, personalization=None,
                                    max_iter=100, tol=1.0e-6, nstart=None, dangling=None,
                                    copy: bool = True, clear=True) -> Optional[dict]:
@@ -239,9 +235,3 @@ def girvan_newman_energy_gradient(graph: nx.Graph, method: str):
         gradients = get_energy_gradients(g, method, complete=False)
         return max(gradients.items(), operator.itemgetter(1))[0]
     return girvan_newman(graph, most_valuable_edge=most_central_edge)
-
-
-def clear_cache():
-    get_energy_gradient_centrality.cache_clear()
-    for function in _ENERGY_METHODS_CACHING.values():
-        function.cache_clear()
