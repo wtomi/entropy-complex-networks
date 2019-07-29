@@ -12,7 +12,7 @@ _NODES_DECORATORS_ATTR_NAME = 'nodes_decorators'
 
 _EMPTY_DICT = MappingProxyType({})
 
-_ENERGY_METHODS_CACHING = {
+_ENERGY_METHODS = {
     'randic': ne.randic_centrality,
     'laplacian': ne.laplacian_centrality,
     'graph': ne.graph_energy_centrality
@@ -26,10 +26,10 @@ def _get_energy_method(method: str) -> Callable[[nx.Graph, int], Dict]:
     :param method: name of a method for computing graph energy. Possible values are: randic, laplacian, graph
     :return: method for computing graph energy
     """
-    if method not in _ENERGY_METHODS_CACHING:
+    if method not in _ENERGY_METHODS:
         raise ValueError(f"Method: {method} doesn't exist")
     else:
-        return _ENERGY_METHODS_CACHING[method]
+        return _ENERGY_METHODS[method]
 
 
 def _get_energy_method_name(method):
@@ -130,7 +130,7 @@ def decorate_graph(graph: nx.Graph,
         if not has_edges_decorated(graph, name):
             result = function(graph)
             if result:
-                for edge, value in function(graph).items():
+                for edge, value in result.items():
                     graph[edge[0]][edge[1]][name] = value
                 add_edges_decorator(graph, name)
     for name, method in methods.items():
@@ -155,8 +155,7 @@ def _get_path_energy(graph, path, method):
 
 
 def get_graph_with_energy_data(g: nx.Graph, methods: Iterable[str], radius: int = 1, copy: bool = False,
-                               clear: bool = False) -> \
-        nx.Graph:
+                               clear: bool = False) -> nx.Graph:
     """
     Computes energies and gradients and stores them in a graph as node attributes and edge attributes.
     Energies are stored in node attributes. The format of attribute names is: <METHOD>_energy
@@ -175,9 +174,9 @@ def get_graph_with_energy_data(g: nx.Graph, methods: Iterable[str], radius: int 
     nodes_decorators = {}
     edges_decorators = {}
     for method, get_energy in energy_methods.items():
-        nodes_decorators[_get_energy_method_name(method)] = lambda graph: get_energy(graph, radius=radius)
-        edges_decorators[_get_gradient_method_name(method)] = lambda graph: get_energy_gradients(graph, method,
-                                                                                                 radius=radius)
+        nodes_decorators[_get_energy_method_name(method)] = lambda graph, f=get_energy: f(graph, radius=radius)
+        edges_decorators[_get_gradient_method_name(method)] = \
+            lambda graph, m=method: get_energy_gradients(g=graph, method=m, radius=radius)
     return decorate_graph(g,
                           nodes_decorators=nodes_decorators,
                           edges_decorators=edges_decorators,
