@@ -1,8 +1,10 @@
-import operator
 from typing import Dict, Callable, Tuple, Iterable, Optional
 from types import MethodType, MappingProxyType
 from networkx.algorithms.community.centrality import girvan_newman
+
 import networkx as nx
+import operator
+import numpy as np
 
 from networkentropy import network_energy as ne
 
@@ -15,7 +17,13 @@ _EMPTY_DICT = MappingProxyType({})
 _ENERGY_METHODS = {
     'randic': ne.randic_centrality,
     'laplacian': ne.laplacian_centrality,
-    'graph': ne.graph_energy_centrality
+    'directed_laplacian': ne.directed_laplacian_centrality,
+    'graph': ne.graph_energy_centrality,
+}
+
+ACTIVATIONS = {
+    'relu': lambda x: x if x > 0 else 0,
+    'elu': lambda x: x if x >= 0 else np.log10(np.abs(x) + 1),
 }
 
 
@@ -188,10 +196,18 @@ def get_graph_with_energy_data(g: nx.Graph, methods: Iterable[str], radius: int 
                           clear=clear)
 
 
-def get_energy_gradient_centrality(g: nx.Graph, method: str, radius: int = 1, alpha=0.85, personalization=None,
+def get_energy_gradient_centrality(g: nx.Graph, method: str, activation: str,
+                                   radius: int = 1, alpha=0.85, personalization=None,
                                    max_iter=100, tol=1.0e-6, nstart=None, dangling=None,
-                                   copy: bool = True, clear=True) -> Optional[dict]:
-    g_with_data = get_graph_with_energy_data(g, [method], radius, copy, clear=clear)
+                                   copy: bool = True, clear=True) -> Optional   [dict]:
+    def gradient_decorator(graph):
+        activation_function = ACTIVATIONS[activation]
+        return {k: activation_function(v) for k, v in
+                get_energy_gradients(graph, method, radius=radius).items()}
+    if not g.is_directed():
+        g = g.to_directed()
+    g_with_data = decorate_graph(g, edges_decorators={_get_gradient_method_name(method): gradient_decorator},
+                                 copy=copy, clear=clear)
     try:
         result = nx.pagerank(g_with_data,
                              weight=_get_gradient_method_name(method),
@@ -202,6 +218,7 @@ def get_energy_gradient_centrality(g: nx.Graph, method: str, radius: int = 1, al
                              nstart=nstart,
                              dangling=dangling)
     except nx.PowerIterationFailedConvergence:
+        print("WARN: PowerIterationFailedConvergence")
         result = None
     return result
 
@@ -233,4 +250,5 @@ def girvan_newman_energy_gradient(graph: nx.Graph, method: str):
     def most_central_edge(g):
         gradients = get_energy_gradients(g, method, complete=False)
         return max(gradients.items(), operator.itemgetter(1))[0]
+
     return girvan_newman(graph, most_valuable_edge=most_central_edge)

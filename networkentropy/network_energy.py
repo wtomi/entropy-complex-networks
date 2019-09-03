@@ -159,6 +159,61 @@ def laplacian_centrality(g: nx.Graph, radius: int = 1, normalized: bool = False)
     return result
 
 
+def get_directed_laplacian_energy(g: nx.Graph) -> float:
+    """
+    Computes the energy of the Laplacian of a graph
+
+    :param g: input graph
+    :return: float: Laplacian energy of a graph
+    """
+
+    L = scipy.sparse.csgraph.laplacian(nx.to_scipy_sparse_matrix(g), normed=False).todense()
+    eigvals = scipy.linalg.eigvals(L).real
+    const = nx.number_of_edges(g) * 2 / nx.number_of_nodes(g)
+    consts = np.full(nx.number_of_nodes(g), const)
+    laplacian_energy = np.abs(np.subtract(eigvals, consts)).sum()
+
+    return laplacian_energy
+
+
+def get_directed_laplacian_spectrum(g: nx.Graph, radius: int = 1) -> np.array:
+    """
+    Computes the spectrum of the Laplacian energy of a graph
+
+    :rtype: object
+    :param g: input graph
+    :param radius: size of the egocentric network
+    :return: NumPy array
+    """
+
+    result = [
+        get_directed_laplacian_energy(nx.ego_graph(G=g, n=n, radius=radius))
+        for n in g.nodes
+    ]
+
+    return np.asarray(result)
+
+
+def directed_laplacian_centrality(g: nx.Graph, radius: int = 1, normalized: bool = False) -> Dict:
+    """
+    Computes the centrality index for each vertex by computing the Laplacian energy of that vertex's
+    neighborhood of a given radius
+
+    :param g: input graph
+    :param radius: radius of the egocentric network
+    :param normalized: if True, the result is normalized to sum to 1
+    :return: dictionary with Laplacian energy centrality for each vertex
+    """
+
+    result = {n: get_directed_laplacian_energy(nx.ego_graph(G=g, n=n, radius=radius)) for n in g.nodes}
+
+    if normalized:
+        s = sum(result.values())
+        result = { n: v/s for n,v in result.items() }
+
+    return result
+
+
 def get_graph_energy(g: nx.Graph) -> float:
     """
     Computes the energy of the adjacency matrix of a graph
