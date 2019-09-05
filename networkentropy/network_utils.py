@@ -78,6 +78,7 @@ class Datasets:
                query_expr: str = None,
                combine_queries: bool = False,
                categories: List[str] = None,
+               not_categories: List[str] = None,
                directed: bool = None,
                min_size: int = None,
                max_size: int = None,
@@ -91,6 +92,7 @@ class Datasets:
         :param query_expr: query expression, if specified and combine is False, other arguments are ignored
         :param combine_queries: specifies whether query_expr should be combined with other conditions (default is False)
         :param categories: categories to be included
+        :param not_categories: categories to be excluded
         :param min_size: minimum number of nodes required in the network
         :param max_size: maximum number of nodes allowed in the network
         :param min_density: minimum density of network allowed
@@ -98,7 +100,7 @@ class Datasets:
         :param only_downloadable: if True, only datasets available to download will be included
         :return: Modified Datasets object
         """
-        args = [categories, directed, min_size, max_size, min_density, max_density, only_downloadable]
+        args = [categories, not_categories, directed, min_size, max_size, min_density, max_density, only_downloadable]
         if query_expr is None:
             query_expr = self._build_query(*args)
         elif combine_queries:
@@ -112,7 +114,7 @@ class Datasets:
         return datasets
 
     @staticmethod
-    def _build_query(categories, directed, min_size, max_size, min_density, max_density, only_downloadable,
+    def _build_query(categories, not_categories, directed, min_size, max_size, min_density, max_density, only_downloadable,
                      base_query=None) -> str:
         query = []
         if base_query is not None:
@@ -121,6 +123,8 @@ class Datasets:
             query.append(f'{DIRECTED} == @directed')
         if categories is not None:
             query.append(f'{CATEGORY} in @categories')
+        if not_categories is not None:
+            query.append(f'{CATEGORY} not in @not_categories')
         if min_size is not None:
             query.append(f'{NUM_NODES} >= @min_size')
         if max_size is not None:
