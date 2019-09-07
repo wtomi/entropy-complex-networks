@@ -199,18 +199,19 @@ def get_graph_with_energy_data(g: nx.Graph, methods: Iterable[str], radius: int 
 def get_energy_gradient_centrality(g: nx.Graph, method: str, activation: str,
                                    radius: int = 1, alpha=0.85, personalization=None,
                                    max_iter=100, tol=1.0e-6, nstart=None, dangling=None,
-                                   copy: bool = True, clear=True) -> Optional   [dict]:
+                                   copy: bool = True, clear=True) -> Optional[dict]:
     def gradient_decorator(graph):
         activation_function = ACTIVATIONS[activation]
         return {k: activation_function(v) for k, v in
                 get_energy_gradients(graph, method, radius=radius).items()}
+
     if not g.is_directed():
         g = g.to_directed()
-    g_with_data = decorate_graph(g, edges_decorators={_get_gradient_method_name(method): gradient_decorator},
+    g_with_data = decorate_graph(g, edges_decorators={'gradient': gradient_decorator},
                                  copy=copy, clear=clear)
     try:
         result = nx.pagerank(g_with_data,
-                             weight=_get_gradient_method_name(method),
+                             weight='gradient',
                              alpha=alpha,
                              personalization=personalization,
                              max_iter=max_iter,
@@ -227,14 +228,15 @@ def _get_centrality_name(method):
     return f'{method}_gradient_centrality'
 
 
-def get_graph_with_energy_gradient_centrality(g: nx.Graph, methods: Iterable[str], radius: int = 1, alpha=0.85,
-                                              personalization=None, max_iter=100, tol=1.0e-6, nstart=None,
+def get_graph_with_energy_gradient_centrality(g: nx.Graph, methods: Iterable[str], activation: str, radius: int = 1,
+                                              alpha=0.85, personalization=None, max_iter=100, tol=1.0e-6, nstart=None,
                                               dangling=None, copy: bool = False, clear: bool = False):
     nodes_decorators = {}
     for method in methods:
         name = _get_centrality_name(method)
         nodes_decorators[name] = lambda graph: get_energy_gradient_centrality(graph,
                                                                               method=method,
+                                                                              activation=activation,
                                                                               radius=radius,
                                                                               alpha=alpha,
                                                                               personalization=personalization,
