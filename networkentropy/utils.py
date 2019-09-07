@@ -2,7 +2,7 @@ import numpy as np
 from typing import List, Dict
 
 
-def precision_at_k(y_true: List, y_pred: List, k: int=1) -> float:
+def precision_at_k(y_true: List, y_pred: List, k: int = 1) -> float:
     """
     Computes precision@k metric for ranking lists
 
@@ -73,13 +73,14 @@ def theil(x: np.array) -> float:
 
     return theil_index
 
+
 def normalize_dict(d: Dict, target: float = 1.0) -> Dict:
     """
     Normalizes the values in the dictionary so that they sum up to factor
 
     :params
     :param d: dict to be normalized
-    :param factor: value to which all values in the dictionary should sum up to
+    :param target: value to which all values in the dictionary should sum up to
 
     :returns normalized dictionary
     """
