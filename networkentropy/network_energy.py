@@ -147,9 +147,6 @@ def laplacian_centrality(g: nx.Graph, radius: int = 1, normalized: bool = False)
     :return: dictionary with Laplacian energy centrality for each vertex
     """
 
-    if g.is_directed():
-        g = g.to_undirected()
-
     result = {n: get_laplacian_energy(nx.ego_graph(G=g, n=n, radius=radius)) for n in g.nodes}
 
     if normalized:
