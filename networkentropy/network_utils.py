@@ -303,3 +303,14 @@ def build_network_from_out_konect(network_name: str, tsv_url: str, directed: boo
         graph_class = nx.Graph
     g = nx.read_adjlist(out_file, create_using=graph_class, comments='%')
     return g
+
+
+def get_largest_connected_component(g: nx.Graph):
+    """
+    Returns the largest connected component of the graph g. Either graph is directed or undirected the connectivity
+    if checked as if the graph was undirected. However, the result has the same type as the input graph.
+
+    :param g: graph (directed or undirected)
+    :return: The largest connected component
+    """
+    return nx.subgraph(g, max(nx.connected_components(g.to_undirected()), key=len))
