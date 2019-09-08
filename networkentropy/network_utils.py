@@ -7,6 +7,7 @@ import wget
 import pandas as pd
 import copy
 import glob
+import numpy as np
 
 from collections import namedtuple
 from typing import List, Iterable, Optional
@@ -14,6 +15,7 @@ from urllib.request import HTTPError
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 from requests import Response
+from sklearn.preprocessing import MinMaxScaler
 
 NAME = 'name'
 CATEGORY = 'category'
@@ -314,3 +316,13 @@ def get_largest_connected_component(g: nx.Graph):
     :return: The largest connected component
     """
     return nx.subgraph(g, max(nx.connected_components(g.to_undirected()), key=len))
+
+
+def eigenvector(g):
+    eigv = np.linalg.eig(nx.to_numpy_array(g))[1][0]
+    print(eigv.dtype)
+    eigv = eigv.real
+    #eigv_mapped = map(lambda v: v if v > 0 else 0, eigv_flatten)
+    eigv_2d = eigv.reshape((-1,1))
+    eigv_flatten = MinMaxScaler().fit_transform(eigv_2d).flatten()
+    return {n: e for n, e in zip(g.nodes(), eigv_flatten)}

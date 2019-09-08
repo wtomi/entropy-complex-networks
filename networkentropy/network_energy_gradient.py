@@ -62,8 +62,6 @@ def get_energy_gradients(g: nx.Graph, method: str, complete: bool = False, radiu
     :param radius: radius of the egocentric network
     :return: returns Dict with edges ad keys and gradients as values
     """
-    if complete:
-        g = g.to_directed()
     get_energies = _get_energy_method(method)
     energies = get_energies(g, radius)
     result = {}
@@ -72,6 +70,8 @@ def get_energy_gradients(g: nx.Graph, method: str, complete: bool = False, radiu
         node2 = edge[1]
         gradient = _compute_gradient(energies[node1], energies[node2])
         result[edge] = gradient
+        if complete and not g.is_directed():
+            result[edge[::-1]] = -gradient
     return result
 
 
