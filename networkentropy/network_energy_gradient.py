@@ -146,18 +146,22 @@ def decorate_graph(graph: nx.Graph,
     return graph
 
 
-def _get_gradient(graph, node1, node2, method: str):
-    if not (method in graph.supported_methods):
-        raise ValueError
-    node1_energy = graph.nodes[node1][_get_energy_method_name(method)]
-    node2_energy = graph.nodes[node2][_get_energy_method_name(method)]
+def get_gradient(graph, node1, node2, method: str):
+    attr_name = _get_energy_method_name(method)
+    if not has_nodes_decorated(graph, attr_name):
+        graph = get_graph_with_energy_data(graph, methods=[method], copy=False)
+    node1_energy = graph.nodes[node1][attr_name]
+    node2_energy = graph.nodes[node2][attr_name]
     return _compute_gradient(node1_energy, node2_energy)
 
 
-def _get_path_energy(graph, path, method):
+def get_path_energy(graph, path, method):
+    attr_name = _get_energy_method_name(method)
+    if not has_nodes_decorated(graph, attr_name):
+        graph = get_graph_with_energy_data(graph, methods=[method], copy=False)
     energy_sum = 0
     for node in path:
-        energy = graph.nodes[node][_get_energy_method_name(method)]
+        energy = graph.nodes[node][attr_name]
         energy_sum += energy
     return energy_sum
 
@@ -188,10 +192,6 @@ def get_graph_with_energy_data(g: nx.Graph, methods: Iterable[str], radius: int 
     return decorate_graph(g,
                           nodes_decorators=nodes_decorators,
                           edges_decorators=edges_decorators,
-                          methods={
-                              'get_gradient': _get_gradient,
-                              'get_path_energy': _get_path_energy
-                          },
                           copy=copy,
                           clear=clear)
 
