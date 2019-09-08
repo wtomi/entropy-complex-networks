@@ -38,14 +38,14 @@ class DatasetsStrategy:
 class Datasets:
     def __init__(self, datasets_strategy: DatasetsStrategy):
         self.datasets_strategy = datasets_strategy
-        self.networks = pd.DataFrame()
+        self.networks_df = pd.DataFrame()
 
         response = self._request_networks()
         if response.status_code != 200:
             print('An error occurred while getting data.')
         else:
             networks = self._get_networks_from_response(response)
-            self.networks = self._map_to_df(networks)
+            self.networks_df = self._map_to_df(networks)
 
     def _request_networks(self) -> Response:
         return requests.get(self._get_networks_url())
@@ -66,14 +66,14 @@ class Datasets:
         Returns datasets information as list
         :return: datasets information as list
         """
-        return self.networks.values.tolist()
+        return self.networks_df.values.tolist()
 
     def to_df(self) -> pd.DataFrame:
         """
         Returns datasets information as DataFrame
         :return: datasets information as DataFrame
         """
-        return self.networks
+        return self.networks_df
 
     def filter(self,
                inplace: bool = False,
@@ -112,7 +112,7 @@ class Datasets:
         else:
             datasets = copy.deepcopy(self)
         if query_expr:
-            datasets.networks.query(query_expr, inplace=True)
+            datasets.networks_df.query(query_expr, inplace=True)
         return datasets
 
     @staticmethod
@@ -146,9 +146,27 @@ class Datasets:
         :param dir_name: name of the directory to download files to
         :return: DataFrame of NetworkX graph objects (DataFrame may contain None for graphs that couldn't be downloaded
         """
-        networks = self.networks.apply(
+        networks = self.networks_df.apply(
             lambda s: build_network_from_out_konect(s[NAME], s[TSV_URL], s[DIRECTED], dir_name), axis=1)
-        return self.networks.assign(graph=networks)
+        self.networks_df['graph'] = networks
+        return self
+
+    def map(self, col, mapping_function, new_col=None):
+        if not (col in self.networks_df.columns):
+            raise ValueError(f"Column {col} doesn't exist. Existing columns: {self.networks_df.columns}")
+        new_series = self.networks_df.apply(lambda r: mapping_function(r[col]), axis=1)
+        if not new_col:
+            new_col = col
+        self.networks_df[new_col] = new_series
+        return self
+
+    def map_graph(self, mapping_function, new_col=None):
+        return self.map(col='graph', mapping_function=mapping_function, new_col=new_col)
+
+    def map_to_largest_component(self):
+        return self.map_graph(get_largest_connected_component)\
+            .map_graph(nx.number_of_nodes, 'real_N')\
+            .map_graph(nx.density, 'real_density')
 
 
 class KonectCCStrategy(DatasetsStrategy):
